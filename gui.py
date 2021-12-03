@@ -68,7 +68,7 @@ def return_rental(frame, return_date, cust_name, vehicle_info):
   print(result)
 
   #displays total customer payment due
-  output_label = Label(frame, text='Total Customer Payment Due: ' + str(result[0][1]))
+  output_label = Label(frame, text='Total Customer Payment Due: $' + str(result[0][1]))
   output_label.grid(row=0, column=0, columnspan=2, sticky=W)
 
   #updates the returned attribute in rental table for the rental being returned
