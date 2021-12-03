@@ -13,7 +13,7 @@ import os
 def return_rental_win():
   #Toplevel object treated as new window
   window = Toplevel(root)
-  window.title("Retrieve Data")
+  window.title("Return Rental")
   window.geometry("400x200")
   
   #frames to contain query input and output separately
@@ -72,7 +72,6 @@ def return_rental(frame, return_date, cust_name, vehicle_info):
   output_label.grid(row=0, column=0, columnspan=2, sticky=W)
 
   #updates the returned attribute in rental table for the rental being returned
-  #db_cur.execute("UPDATE RENTAL SET Returned = 1 WHERE CustID = " + str(result[0][0]) + " AND VehicleID = " + vehicle_info)
   #updates the payment date if it is NULL also
   db_cur.execute("UPDATE RENTAL SET Returned = 1, PaymentDate = CASE WHEN PaymentDate = 'NULL' THEN '" + return_date + "' END WHERE CustID = " + str(result[0][0]) + " AND ReturnDate = '" + return_date + "' AND VehicleID = '" + vehicle_info + "'")
   
