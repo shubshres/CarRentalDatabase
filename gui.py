@@ -14,7 +14,7 @@ def return_rental_win():
   #Toplevel object treated as new window
   window = Toplevel(root)
   window.title("Retrieve Data")
-  window.geometry("400x400")
+  window.geometry("400x200")
   
   #frames to contain query input and output separately
   query_frame = Frame(window)
@@ -37,11 +37,10 @@ def return_rental_win():
   VIN_tb.grid(row=2, column=1)
 
   #confirmation/submit query button
-  submit_btn = Button(output_frame, text='Submit', command=lambda: return_rental(output_frame, return_date_tb.get(), cust_name_tb.get(), VIN_tb.get()))
+  submit_btn = Button(query_frame, text='Submit', command=lambda: return_rental(output_frame, return_date_tb.get(), cust_name_tb.get(), VIN_tb.get()))
   submit_btn.grid(row=7, column=1, sticky=E)
 
   #attach frames to window and text to output frame
-  #text.grid(row=1, column=0, padx=10, pady=10)
   query_frame.grid(row=0, column=0)
   output_frame.grid(row=1, column=0)
 
@@ -53,36 +52,38 @@ def return_rental_win():
 # vehicle_info - vehicle id/vin that is rented
 def return_rental(frame, return_date, cust_name, vehicle_info):
   #ensure connection to database
-  db_conn = sqlite3.connect(os.getcwd() + '/CarRental2019.db')
+  db_conn = sqlite3.connect(os.getcwd() + '/project2.db')
   db_cur = db_conn.cursor()
   
   #retrieves the customer id, the amount due for the rental given the rental information
-  inner_query = "SELECT R.CustID, R.TotalAmount FROM RENTAL AS R JOIN CUSTOMER AS C ON R.CustID = C.CustID WHERE R.ReturnDate = '" + return_date + "' AND C.CustName = '" + cust_name + "' AND R.VehicleID = '" + vehicle_info + "'"
-  inner_query2 = "SELECT R.CustID FROM RENTAL AS R JOIN CUSTOMER AS C ON R.CustID = C.CustID WHERE R.ReturnDate = '" + return_date + "' AND C.CustName = '" + cust_name + "' AND R.VehicleID = '" + vehicle_info + "'"
+  query = "SELECT R.CustID, R.TotalAmount FROM RENTAL AS R JOIN CUSTOMER AS C ON R.CustID = C.CustID WHERE R.ReturnDate = '" + return_date + "' AND C.CustName = '" + cust_name + "' AND R.VehicleID = '" + vehicle_info + "'"
 
-  print(inner_query)
+  print(query)
 
-  db_cur.execute(inner_query)
+  db_cur.execute(query)
 
   #stores result of inner_query
   result = db_cur.fetchall()
+
+  print(result)
 
   #displays total customer payment due
   output_label = Label(frame, text='Total Customer Payment Due: ' + str(result[0][1]))
   output_label.grid(row=0, column=0, columnspan=2, sticky=W)
 
   #updates the returned attribute in rental table for the rental being returned
-  db_cur.execute("UPDATE RENTAL SET Returned = 1 WHERE CustID IN (" + inner_query2 + ")")
+  #db_cur.execute("UPDATE RENTAL SET Returned = 1 WHERE CustID = " + str(result[0][0]) + " AND VehicleID = " + vehicle_info)
   #updates the payment date if it is NULL also
-  db_cur.execute("UPDATE RENTAL SET PaymentDate = ReturnDate WHERE CustID IN (" + inner_query2 + ") AND PaymentDate = 'NULL'")
+  db_cur.execute("UPDATE RENTAL SET Returned = 1, PaymentDate = CASE WHEN PaymentDate = 'NULL' THEN '" + return_date + "' END WHERE CustID = " + str(result[0][0]) + " AND ReturnDate = '" + return_date + "' AND VehicleID = '" + vehicle_info + "'")
   
   db_conn.commit()
   db_conn.close()
 
 # for inserting adding info about a new customer
+# frame - frame to place outputs in
 # cust_name - name of the customer being added to the database
 # phone - phone number of the customer being added to the database
-def add_new_cust(cust_name, phone):
+def add_new_cust(frame, cust_name, phone):
   new_cust_conn = sqlite3.connect(
       os.getcwd() + '/project2.db')  # ensure connection
   new_cust_cur = new_cust_conn.cursor()
@@ -90,36 +91,47 @@ def add_new_cust(cust_name, phone):
       "INSERT INTO CUSTOMER VALUES(NULL, ?, ?)", (cust_name, phone))
   #using parameterized queries here
 
+  new_cust_cur.execute("SELECT CustID FROM CUSTOMER WHERE CustName = ? AND Phone = ?", (cust_name, phone))
+  #displays total customer payment due
+  result = new_cust_cur.fetchall()
+  output_label = Label(frame, text='Added new customer: ' + str(result[0][0]) + ', ' + cust_name + ', ' + phone + ' (1 new row)')
+  output_label.grid(row=0, column=0, columnspan=2, sticky=W)
+
   #commit changes - so any changes seen by other connections of db
   new_cust_conn.commit()
   #close connection
   new_cust_conn.close()
 
 # window for inserting info about a new customer
-
-
 def new_cust_win():
   #Toplevel object treated as new window
   window = Toplevel(root)
   window.title("Add New Customer")
-  window.geometry("400x100")
+  window.geometry("400x200")
+
+  #frames to contain query input and output separately
+  query_frame = Frame(window)
+  output_frame = Frame(window)
 
   #labels and text boxes
-  cust_name_label = Label(window, text='Customer Name: ')
-  cust_name_tb = Entry(window, width=30)
+  cust_name_label = Label(query_frame, text='Customer Name: ')
+  cust_name_tb = Entry(query_frame, width=30)
   cust_name_label.grid(row=0, column=0)
   cust_name_tb.grid(row=0, column=1)
 
-  phone_label = Label(window, text='Phone Number: ')
-  phone_tb = Entry(window, width=30)
+  phone_label = Label(query_frame, text='Phone Number: ')
+  phone_tb = Entry(query_frame, width=30)
   phone_label.grid(row=1, column=0)
   phone_tb.grid(row=1, column=1)
 
-  add_cust_btn = Button(window, text='Add Customer', command=lambda: add_new_cust(cust_name_tb.get(
+  add_cust_btn = Button(query_frame, text='Add Customer', command=lambda: add_new_cust(output_frame, cust_name_tb.get(
   ), phone_tb.get()))  # using lambda to execute function utilizing the textbox entries
   #get() grabs whatevers in that text box on the gui components
-  #add_cust_btn.grid(row=3, column=1, sticky=E)
   add_cust_btn.grid(row=2, column=0, columnspan=2, pady=10, padx=10, ipadx=100)
+
+  #attach frames to window and text to output frame
+  query_frame.grid(row=0, column=0)
+  output_frame.grid(row=1, column=0)
 
 # define the input query structure
 # creating a function called add_new_vehicle using this function
