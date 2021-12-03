@@ -9,56 +9,75 @@ from tkinter import *
 import sqlite3
 import os
 
-# window for executing a select-from-where query and displaying the output
-
-#Toplevel object treated as new window
-
-
-def query_win():
+# window for handling returning a rental
+def return_rental_win():
+  #Toplevel object treated as new window
   window = Toplevel(root)
   window.title("Retrieve Data")
-
+  window.geometry("400x400")
+  
   #frames to contain query input and output separately
   query_frame = Frame(window)
   output_frame = Frame(window)
 
   #labels and textboxes for queries
-  select_label = Label(query_frame, text='SELECT')
-  select_label.grid(row=0, column=0)
-  select_tb = Entry(query_frame, width=30)
-  select_tb.grid(row=0, column=1)
+  cust_name_label = Label(query_frame, text='Customer Name: ')
+  cust_name_tb = Entry(query_frame, width=30)
+  cust_name_label.grid(row=0, column=0)
+  cust_name_tb.grid(row=0, column=1)
 
-  from_label = Label(query_frame, text='FROM')
-  from_label.grid(row=1, column=0)
-  from_tb = Entry(query_frame, width=30)
-  from_tb.grid(row=1, column=1)
-
-  where_label = Label(query_frame, text='FROM')
-  where_label.grid(row=2, column=0)
-  where_tb = Entry(query_frame, width=30)
-  where_tb.grid(row=2, column=1)
+  return_date_label = Label(query_frame, text='Return Date:')
+  return_date_label.grid(row=1, column=0)
+  return_date_tb = Entry(query_frame, width=30)
+  return_date_tb.grid(row=1, column=1)
+  
+  VIN_label = Label(query_frame, text='VIN: ')
+  VIN_tb = Entry(query_frame, width=30)
+  VIN_label.grid(row=2, column=0)
+  VIN_tb.grid(row=2, column=1)
 
   #confirmation/submit query button
-  submit_btn = Button(query_frame, command=lambda: query_result(
-      output_frame, select_tb.get(), from_tb.get(), where_tb.get()))
-  submit_btn.grid(row=3, column=1, sticky=E)
+  submit_btn = Button(output_frame, text='Submit', command=lambda: return_rental(output_frame, return_date_tb.get(), cust_name_tb.get(), VIN_tb.get()))
+  submit_btn.grid(row=7, column=1, sticky=E)
 
-  #attach frames to window
+  #attach frames to window and text to output frame
+  #text.grid(row=1, column=0, padx=10, pady=10)
   query_frame.grid(row=0, column=0)
   output_frame.grid(row=1, column=0)
 
-# displays the result of the select-from-where query entered by user by adding text to the output_frame passed in
-# frame - output frame to add the query result text onto to displaying
-# select - attribute selection for the query
-# frm - tables to retrieve data from
-# where - conditions for the query
-def query_result(frame, select, frm, where):
+# retrieves a rental by return date, customer name, vehicle vehicle_info
+# handles transaction to return a vehicle by printing total customer payment due for the rental, enter it in the database, and update returned attribute accordingly
+# frame - frame to place outputs in
+# return_date - when the rental needs to be returned
+# cust_name - customer name for the rental information
+# vehicle_info - vehicle id/vin that is rented
+def return_rental(frame, return_date, cust_name, vehicle_info):
   #ensure connection to database
-  db_conn = sqlite3.connect(os.getcwd() + '/project2.db')
+  db_conn = sqlite3.connect(os.getcwd() + '/CarRental2019.db')
   db_cur = db_conn.cursor()
-  db_cur.execute("SELECT ? FROM ? WHERE ?", (select, frm, where))
+  
+  #retrieves the customer id, the amount due for the rental given the rental information
+  inner_query = "SELECT R.CustID, R.TotalAmount FROM RENTAL AS R JOIN CUSTOMER AS C ON R.CustID = C.CustID WHERE R.ReturnDate = '" + return_date + "' AND C.CustName = '" + cust_name + "' AND R.VehicleID = '" + vehicle_info + "'"
+  inner_query2 = "SELECT R.CustID FROM RENTAL AS R JOIN CUSTOMER AS C ON R.CustID = C.CustID WHERE R.ReturnDate = '" + return_date + "' AND C.CustName = '" + cust_name + "' AND R.VehicleID = '" + vehicle_info + "'"
 
+  print(inner_query)
+
+  db_cur.execute(inner_query)
+
+  #stores result of inner_query
   result = db_cur.fetchall()
+
+  #displays total customer payment due
+  output_label = Label(frame, text='Total Customer Payment Due: ' + str(result[0][1]))
+  output_label.grid(row=0, column=0, columnspan=2, sticky=W)
+
+  #updates the returned attribute in rental table for the rental being returned
+  db_cur.execute("UPDATE RENTAL SET Returned = 1 WHERE CustID IN (" + inner_query2 + ")")
+  #updates the payment date if it is NULL also
+  db_cur.execute("UPDATE RENTAL SET PaymentDate = ReturnDate WHERE CustID IN (" + inner_query2 + ") AND PaymentDate = 'NULL'")
+  
+  db_conn.commit()
+  db_conn.close()
 
 # for inserting adding info about a new customer
 # cust_name - name of the customer being added to the database
@@ -419,8 +438,8 @@ title = Label(root, text='Car Rental Database', font='50')
 title.grid(row=0, column=0, columnspan=2, pady=10, ipadx=100)
 
 # create buttons
-query_btn = Button(root, text='Retrieve Data', command=query_win)
-query_btn.grid(row=1, column=0, columnspan=2, pady=10, ipadx=100)
+return_rental_btn = Button(root, text='Return Rental', command=return_rental_win)
+return_rental_btn.grid(row=1, column=0, columnspan=2, pady=10, ipadx=100)
 
 new_cust_btn = Button(root, text='Add New Customer', command=new_cust_win)
 new_cust_btn.grid(row=2, column=0, columnspan=2, pady=10, ipadx=100)
