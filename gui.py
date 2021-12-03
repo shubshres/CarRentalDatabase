@@ -335,12 +335,21 @@ def retrieve_cust_info(retrieve_custWindow, CustID, CustName):
   # WHERE R.CUSTID = C.CUSTID AND CUSTID = VAR_CUSTID
 
   # execute
+  # if CustID != '':
+  #   retrieve_cust_cursor.execute("SELECT CustID, CustName FROM CUSTOMER WHERE CustID=? AND CustName LIKE ?", (CustID, ('%'+CustName+'%'),))
+  # elif CustName != '':
+  #   retrieve_cust_cursor.execute("SELECT CustID, CustName FROM CUSTOMER WHERE CustName LIKE ?", ('%'+CustName+'%',))
+  # else:
+  #   retrieve_cust_cursor.execute("SELECT CustID, CustName FROM CUSTOMER")
+    
+    
   if CustID != '':
-    retrieve_cust_cursor.execute("SELECT CustID, CustName FROM CUSTOMER WHERE CustID=? AND CustName LIKE ?", (CustID, ('%'+CustName+'%'),))
+        retrieve_cust_cursor.execute("SELECT C.CustID, C.CustName, SUM(R.TotalAmount) FROM CUSTOMER AS C, RENTAL AS R WHERE C.CUSTID = R.CUSTID AND C.CustID=? AND C.CustName LIKE ? AND R.PAYMENTDATE <> 'NULL'", (CustID, ('%'+CustName+'%'),))
   elif CustName != '':
-    retrieve_cust_cursor.execute("SELECT CustID, CustName FROM CUSTOMER WHERE CustName LIKE ?", ('%'+CustName+'%',))
+    retrieve_cust_cursor.execute("SELECT C.CustID, C.CustName, SUM(R.TotalAmount) FROM CUSTOMER AS C, RENTAL AS R WHERE C.CustName LIKE ? AND C.CUSTID = R.CUSTID AND R.PAYMENTDATE <> 'NULL'", ('%'+CustName+'%',))
   else:
-    retrieve_cust_cursor.execute("SELECT CustID, CustName FROM CUSTOMER")
+    retrieve_cust_cursor.execute("SELECT C.CustID, C.CustName, SUM(R.TotalAmount) FROM CUSTOMER AS C, RENTAL AS R WHERE C.CUSTID = R.CUSTID ORDER BY R.TOTALAMOUNT DESC")
+    
     
   cust_out_result = retrieve_cust_cursor.fetchall()
   
@@ -348,11 +357,14 @@ def retrieve_cust_info(retrieve_custWindow, CustID, CustName):
   
   print_cust = ''
   
-  for cust_position in cust_out_result:
-      print_cust += str((str(cust_position[0])) + " " + (cust_position[1]) + "\n")
 
-  retrieve_cust_label = Label(retrieve_custWindow, text=print_cust)
-  retrieve_cust_label.grid(row=9, column=0, columnspan=2)
+  for cust_position in cust_out_result:
+      print_cust += str((str(cust_position[0])) + " | " + (cust_position[1]) + " | $" + str(cust_position[2]) + ".00\n")
+
+  retrieve_cust_label = Label(retrieve_custWindow, text=("Customer ID | Customer Name | Remaining Balance\n\n")+print_cust)
+  retrieve_cust_label.grid(row=3, column=0, columnspan=2)
+  
+  
     
   
   # else:
