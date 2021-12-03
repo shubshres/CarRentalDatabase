@@ -346,9 +346,10 @@ def retrieve_cust_info(retrieve_custWindow, CustID, CustName):
   if CustID != '':
         retrieve_cust_cursor.execute("SELECT C.CustID, C.CustName, SUM(R.TotalAmount) FROM CUSTOMER AS C, RENTAL AS R WHERE C.CUSTID = R.CUSTID AND C.CustID=? AND C.CustName LIKE ? AND R.PAYMENTDATE <> 'NULL'", (CustID, ('%'+CustName+'%'),))
   elif CustName != '':
-    retrieve_cust_cursor.execute("SELECT C.CustID, C.CustName, SUM(R.TotalAmount) FROM CUSTOMER AS C, RENTAL AS R WHERE C.CustName LIKE ? AND C.CUSTID = R.CUSTID AND R.PAYMENTDATE <> 'NULL'", ('%'+CustName+'%',))
+    retrieve_cust_cursor.execute(
+        "SELECT C.CustID, C.CustName, SUM(R.TotalAmount) FROM CUSTOMER AS C, RENTAL AS R WHERE C.CustName LIKE ? AND C.CUSTID = R.CUSTID AND R.PAYMENTDATE <> 'NULL' GROUP BY C.CUSTID ORDER BY R.TOTALAMOUNT DESC", ('%'+CustName+'%',))
   else:
-    retrieve_cust_cursor.execute("SELECT C.CustID, C.CustName, SUM(R.TotalAmount) FROM CUSTOMER AS C, RENTAL AS R WHERE C.CUSTID = R.CUSTID ORDER BY R.TOTALAMOUNT DESC")
+    retrieve_cust_cursor.execute("SELECT CustID, CustName, TotalAmount FROM CUSTOMER NATURAL JOIN RENTAL WHERE PAYMENTDATE <> 'NULL' GROUP BY CustID ORDER BY TOTALAMOUNT DESC")
     
     
   cust_out_result = retrieve_cust_cursor.fetchall()
@@ -363,13 +364,6 @@ def retrieve_cust_info(retrieve_custWindow, CustID, CustName):
 
   retrieve_cust_label = Label(retrieve_custWindow, text=("Customer ID | Customer Name | Remaining Balance\n\n")+print_cust)
   retrieve_cust_label.grid(row=3, column=0, columnspan=2)
-  
-  
-    
-  
-  # else:
-  #   #retrieve_cust_cursor.execute("SELECT " + CustID + " FROM " + frm)
-  #   print("Did not work man")
 
 # retrieve customer information
 def retrieve_customer_win():
