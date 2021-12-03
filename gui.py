@@ -52,7 +52,7 @@ def return_rental_win():
 # vehicle_info - vehicle id/vin that is rented
 def return_rental(frame, return_date, cust_name, vehicle_info):
   #ensure connection to database
-  db_conn = sqlite3.connect(os.getcwd() + '/project2.db')
+  db_conn = sqlite3.connect(os.getcwd() + '/CarRental2019.db')
   db_cur = db_conn.cursor()
   
   #retrieves the customer id, the amount due for the rental given the rental information
@@ -85,7 +85,7 @@ def return_rental(frame, return_date, cust_name, vehicle_info):
 # phone - phone number of the customer being added to the database
 def add_new_cust(frame, cust_name, phone):
   new_cust_conn = sqlite3.connect(
-      os.getcwd() + '/project2.db')  # ensure connection
+      os.getcwd() + '/CarRental2019.db')  # ensure connection
   new_cust_cur = new_cust_conn.cursor()
   new_cust_cur.execute(
       "INSERT INTO CUSTOMER VALUES(NULL, ?, ?)", (cust_name, phone))
@@ -138,7 +138,7 @@ def new_cust_win():
 # to insert values into the database
 def add_new_vehicle(VIN, vehicle_description, vehicle_year, vehicle_type, vehicle_category):
   # connecting to the database
-  new_vehicle_connect = sqlite3.connect('project2.db')  # ensure connection
+  new_vehicle_connect = sqlite3.connect('CarRental2019.db')  # ensure connection
 
   # linking to the db
   new_vehicle_cursor = new_vehicle_connect.cursor()
@@ -219,7 +219,7 @@ def new_vehicle_win():
 # to insert values into the database
 def add_new_reservation(CustID, VehicleID, StartDate, OrderDate, RentalType, Qty, ReturnDate, TotalAmount, PaymentDate):
   # connecting to the sqlite database
-  rental_reservation_connect = sqlite3.connect('project2.db')
+  rental_reservation_connect = sqlite3.connect('CarRental2019.db')
 
   # cursor to access to connection
   rental_reservation_cur = rental_reservation_connect.cursor()
@@ -353,11 +353,13 @@ def new_rental_win():
                               pady=10, padx=10, ipadx=100)
 
 
+
+# Q5A
 # Retrieving Customer information
 def retrieve_cust_info(retrieve_custWindow, CustID, CustName):
 
   # connecting to the sqlite database
-  retrieve_cust_connect = sqlite3.connect('project2.db')
+  retrieve_cust_connect = sqlite3.connect('CarRental2019.db')
 
   # cursor to access to connection
   retrieve_cust_cursor = retrieve_cust_connect.cursor()
@@ -366,7 +368,7 @@ def retrieve_cust_info(retrieve_custWindow, CustID, CustName):
   # New Version
   if CustID != '':
     retrieve_cust_cursor.execute(
-        "SELECT CustomerID, CustomerName, SUM(RentalBalance) FROM vRentalInfo WHERE CustomerID=? AND CustomerName LIKE ?", (CustID, ('%'+CustName+'%'),))
+        "SELECT CustomerID, CustomerName, SUM(RentalBalance) FROM vRentalInfo WHERE CustomerID=? AND CustomerName LIKE ?", (('%'+CustID+'%'), ('%'+CustName+'%'),))
   elif CustName != '':
     retrieve_cust_cursor.execute("SELECT CustomerID, CustomerName, SUM(RentalBalance) FROM vRentalInfo WHERE CustomerName LIKE ? GROUP BY CustomerName ORDER BY COUNT(RentalBalance) DESC", ('%'+CustName+'%',))
   else:
@@ -438,6 +440,94 @@ def retrieve_customer_win():
       row=2, column=0, columnspan=2, pady=10, padx=10, ipadx=100)
 
 
+
+# Q5B
+# This is the function that retrieves the vehicle information (5b)
+def retrieve_vehicle_info(retrieve_vehicleWindow, VehicleID, CarDescription):
+  # connecting to the sqlite database
+  retrieve_vehicle_connect = sqlite3.connect('CarRental2019.db')
+
+  # cursor to access to connection
+  retrieve_vehicle_cursor = retrieve_vehicle_connect.cursor()
+
+  print("Retrieving vehicle information")
+
+  # # execute
+  if VehicleID != '':
+    retrieve_vehicle_cursor.execute(
+        "SELECT VIN, Vehicle, (OrderAmount/TotalDays) FROM vRentalInfo WHERE VIN LIKE ? AND Vehicle LIKE ? GROUP BY VIN", (('%'+VehicleID+'%'), ('%'+CarDescription+'%'),))
+  elif CarDescription != '':
+    retrieve_vehicle_cursor.execute(
+        "SELECT VIN, Vehicle, (OrderAmount/TotalDays) FROM vRentalInfo WHERE Vehicle LIKE ? GROUP BY VIN ORDER BY COUNT(OrderAmount/TotalDays) DESC", (('%'+CarDescription+'%'),))
+  else:
+    retrieve_vehicle_cursor.execute(
+        "SELECT VIN, Vehicle, (OrderAmount/TotalDays) FROM vRentalInfo GROUP BY VIN ORDER BY COUNT(OrderAmount/TotalDays) DESC")
+
+  # old
+  # if VehicleID != '':
+  #       retrieve_vehicle_cursor.execute("SELECT V.VehicleID, V.CarDescription, R.Daily FROM VEHICLE AS V, RATE AS R WHERE V.CarType = R.CarType AND V.CarCategory = R.Category AND VehicleID=? AND CarDescription LIKE ?", (VehicleID, ('%'+CarDescription+'%'),))
+  # elif CarDescription != '':
+  #   retrieve_vehicle_cursor.execute("SELECT VehicleID, CarDescription FROM VEHICLE WHERE CarDescription LIKE ?", ('%'+CarDescription+'%',))
+  # else:
+  #   retrieve_vehicle_cursor.execute("SELECT VehicleID, CarDescription FROM VEHICLE")
+    
+
+
+  cust_out_result = retrieve_vehicle_cursor.fetchall()
+
+  print(cust_out_result)
+
+  print_cust = ''
+  rowCount = 1
+  for cust_position in cust_out_result:
+      print_cust += str(str(rowCount) + ".) " + (str(cust_position[0])) + "  |  " + str(cust_position[1]) + "  |  $" + str(cust_position[2])+"\n")
+      rowCount+=1
+      
+  retrieve_cust_label = Label(retrieve_vehicleWindow, text=(
+      "VIN # | Vehicle Description  |  Daily Rate \n\n") + print_cust)
+  retrieve_cust_label.grid(row=9, column=0, columnspan=2)
+
+
+# This is the function that displays the window for retrieving vehicle information (5b)
+def retrieve_vehicle_win():
+  # make retrieve vehicle window
+  retrieve_vehicleWindow = Toplevel(root)
+
+  # set the window title
+  retrieve_vehicleWindow.title("Retrieve Vehicle Information")
+
+  # set the dimensions
+  retrieve_vehicleWindow.geometry("500x500")
+
+  # Making the Text Boxes and labels for VIN Number
+  # entering the component in the text box
+  VIN_retrieve = Entry(retrieve_vehicleWindow, width=30)
+  # place the box
+  VIN_retrieve.grid(row=0, column=1)
+  # creating the label for the entry box
+  VIN_retrieve_label = Label(retrieve_vehicleWindow, text='VIN #: ')
+  # placing the label
+  VIN_retrieve_label.grid(row=0, column=0)
+
+  # Making the Text Boxes and labels for Vehicle Description
+  # entering the component in the text box
+  description_retrieve = Entry(retrieve_vehicleWindow, width=30)
+  # place the box
+  description_retrieve.grid(row=1, column=1)
+  # creating the label for the entry box
+  description_retrieve_label = Label(
+      retrieve_vehicleWindow, text='Vehicle Description: ')
+  # placing the label
+  description_retrieve_label.grid(row=1, column=0)
+
+  find_vehicle_button = Button(retrieve_vehicleWindow, text='Find Vehicle', command=lambda: retrieve_vehicle_info(
+      retrieve_vehicleWindow, VIN_retrieve.get(), description_retrieve.get()))
+  find_vehicle_button.grid(
+      row=2, column=0, columnspan=2, pady=10, padx=10, ipadx=100)
+
+
+
+
 # connect to sqlite database
 root = Tk()
 root.title('Car Rental Database')
@@ -446,7 +536,7 @@ root.title('Car Rental Database')
 root.geometry("350x400")
 
 # connecting to the sqlite database
-car_rental_connect = sqlite3.connect(os.getcwd() + '/project2.db')
+car_rental_connect = sqlite3.connect(os.getcwd() + '/CarRental2019.db')
 # cursor to access to connection
 car_rental_cur = car_rental_connect.cursor()
 
@@ -472,7 +562,7 @@ get_cust_btn = Button(root, text='Retrieve Customer Info',
 get_cust_btn.grid(row=5, column=0, columnspan=2, pady=10, ipadx=100)
 
 get_vhcl_btn = Button(root, text='Retrieve Vehicle Info',
-                      command=new_rental_win)
+                      command=retrieve_vehicle_win)
 get_vhcl_btn.grid(row=6, column=0, columnspan=2, pady=10, ipadx=100)
 
 # execute the tkinter components
