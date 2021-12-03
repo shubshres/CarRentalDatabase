@@ -322,7 +322,7 @@ def new_rental_win():
                               pady=10, padx=10, ipadx=100)
 
 
-def retrieve_cust_info(CustID, CustName):
+def retrieve_cust_info(retrieve_custWindow, CustID, CustName):
 
   # connecting to the sqlite database
   retrieve_cust_connect = sqlite3.connect('project2.db')
@@ -346,13 +346,13 @@ def retrieve_cust_info(CustID, CustName):
   
   print(cust_out_result)
   
-  # print_cust = ''
+  print_cust = ''
   
-  # for cust_position in cust_out_result:
-  #     print_cust += str((str(cust_position[0])) + " " + (cust_position[1]) + "\n")
+  for cust_position in cust_out_result:
+      print_cust += str((str(cust_position[0])) + " " + (cust_position[1]) + "\n")
 
-  # retrieve_cust_label = Label(retrieve_customer_win, text=print_cust)
-  # retrieve_cust_label.grid(row=3, column=0, columnspan=2)
+  retrieve_cust_label = Label(retrieve_custWindow, text=print_cust)
+  retrieve_cust_label.grid(row=9, column=0, columnspan=2)
     
   
   # else:
@@ -391,7 +391,7 @@ def retrieve_customer_win():
   CustName_retrieve_label.grid(row=1, column=0)
 
   find_customer_button = Button(retrieve_custWindow, text='Find Customer', command=lambda: retrieve_cust_info(
-      CustID_retrieve.get(), CustName_retrieve.get()))
+      retrieve_custWindow, CustID_retrieve.get(), CustName_retrieve.get()))
   find_customer_button.grid(
       row=2, column=0, columnspan=2, pady=10, padx=10, ipadx=100)
 
