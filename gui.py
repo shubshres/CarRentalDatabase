@@ -433,33 +433,24 @@ def retrieve_customer_win():
 # Q5B
 # This is the function that retrieves the vehicle information (5b)
 def retrieve_vehicle_info(retrieve_vehicleWindow, VehicleID, CarDescription):
-      # connecting to the sqlite database
+  # connecting to the sqlite database
   retrieve_vehicle_connect = sqlite3.connect('CarRental2019.db')
 
   # cursor to access to connection
   retrieve_vehicle_cursor = retrieve_vehicle_connect.cursor()
 
   print("Retrieving vehicle information")
+# SELECT VIN, Vehicle, ROUND(CAST(OrderAmount AS float)/TotalDays, 2) AS AverageDailyPrice FROM vRentalInfo ORDER BY (OrderAmount/TotalDays);
 
-  # # execute
   if VehicleID != '':
     retrieve_vehicle_cursor.execute(
-        "SELECT VIN, Vehicle, (OrderAmount/TotalDays) FROM vRentalInfo WHERE VIN LIKE ? AND Vehicle LIKE ? GROUP BY VIN", (('%'+VehicleID+'%'), ('%'+CarDescription+'%'),))
+        "SELECT VIN, Vehicle, ROUND(CAST(OrderAmount AS float)/TotalDays, 2) FROM vRentalInfo WHERE VIN LIKE ? AND Vehicle LIKE ?", (('%'+VehicleID+'%'), ('%'+CarDescription+'%'),))
   elif CarDescription != '':
     retrieve_vehicle_cursor.execute(
-        "SELECT VIN, Vehicle, (OrderAmount/TotalDays) FROM vRentalInfo WHERE Vehicle LIKE ? GROUP BY VIN ORDER BY (OrderAmount/TotalDays) ASC", (('%'+CarDescription+'%'),))
+        "SELECT VIN, Vehicle, ROUND(CAST(OrderAmount AS float)/TotalDays, 2) FROM vRentalInfo WHERE Vehicle LIKE ? ORDER BY (OrderAmount/TotalDays) ASC", (('%'+CarDescription+'%'),))
   else:
     retrieve_vehicle_cursor.execute(
-        "SELECT VIN, Vehicle, (OrderAmount/TotalDays) FROM vRentalInfo GROUP BY VIN ORDER BY (OrderAmount/TotalDays) ASC")
-
-  # old
-  # if VehicleID != '':
-  #       retrieve_vehicle_cursor.execute("SELECT V.VehicleID, V.CarDescription, R.Daily FROM VEHICLE AS V, RATE AS R WHERE V.CarType = R.CarType AND V.CarCategory = R.Category AND VehicleID=? AND CarDescription LIKE ?", (VehicleID, ('%'+CarDescription+'%'),))
-  # elif CarDescription != '':
-  #   retrieve_vehicle_cursor.execute("SELECT VehicleID, CarDescription FROM VEHICLE WHERE CarDescription LIKE ?", ('%'+CarDescription+'%',))
-  # else:
-  #   retrieve_vehicle_cursor.execute("SELECT VehicleID, CarDescription FROM VEHICLE")
-    
+        "SELECT VIN, Vehicle, ROUND(CAST(OrderAmount AS float)/TotalDays, 2) AS AverageDailyPrices FROM vRentalInfo GROUP BY VIN ORDER BY (OrderAmount/TotalDays) ASC")
 
 
   cust_out_result = retrieve_vehicle_cursor.fetchall()
