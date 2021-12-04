@@ -216,7 +216,7 @@ def new_vehicle_win():
 
 # creating a function called add_new_reservation using this function
 # to insert values into the database
-def add_new_reservation(CustID, VehicleID, StartDate, OrderDate, RentalType, Qty, ReturnDate, TotalAmount, PaymentDate):
+def add_new_reservation(CustID, VehicleID, StartDate, OrderDate, RentalType, Qty, ReturnDate, TotalAmount, PaymentDate, ReturnStatus):
   # connecting to the sqlite database
   rental_reservation_connect = sqlite3.connect('CarRental2019.db')
 
@@ -225,7 +225,7 @@ def add_new_reservation(CustID, VehicleID, StartDate, OrderDate, RentalType, Qty
 
   # execute
   rental_reservation_cur.execute(
-      "INSERT INTO RENTAL VALUES(?,?,?,?,?,?,?,?,?)", (CustID, VehicleID, StartDate, OrderDate, RentalType, Qty, ReturnDate, TotalAmount, PaymentDate))
+      "INSERT INTO RENTAL VALUES(?,?,?,?,?,?,?,?,?,?)", (CustID, VehicleID, StartDate, OrderDate, RentalType, Qty, ReturnDate, TotalAmount, PaymentDate, ReturnStatus))
 
   # commit changes
   rental_reservation_connect.commit()
@@ -347,7 +347,7 @@ def new_rental_win():
   # Creating Buttons
   # Where the text box connects with the submit function
   add_reservation_button = Button(rentalWindow, text='Add Reservation', command=lambda: add_new_reservation(
-      CustID.get(), VehicleID.get(), StartDate.get(), OrderDate.get(), RentalType.get(), Qty.get(), ReturnDate.get(), TotalAmount.get(), PaymentDate.get()))
+      CustID.get(), VehicleID.get(), StartDate.get(), OrderDate.get(), RentalType.get(), Qty.get(), ReturnDate.get(), TotalAmount.get(), PaymentDate.get(), 0))
   add_reservation_button.grid(row=9, column=0, columnspan=2,
                               pady=10, padx=10, ipadx=100)
 
