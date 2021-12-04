@@ -367,23 +367,11 @@ def retrieve_cust_info(retrieve_custWindow, CustID, CustName):
   # New Version
   if CustID != '':
     retrieve_cust_cursor.execute(
-        "SELECT CustomerID, CustomerName, SUM(RentalBalance) FROM vRentalInfo WHERE CustomerID=? AND CustomerName LIKE ?", (('%'+CustID+'%'), ('%'+CustName+'%'),))
+        "SELECT CustomerID, CustomerName, SUM(RentalBalance) FROM vRentalInfo WHERE CustomerID LIKE ? AND CustomerName LIKE ?", (('%'+CustID+'%'), ('%'+CustName+'%'),))
   elif CustName != '':
     retrieve_cust_cursor.execute("SELECT CustomerID, CustomerName, SUM(RentalBalance) FROM vRentalInfo WHERE CustomerName LIKE ? GROUP BY CustomerName ORDER BY COUNT(RentalBalance) DESC", ('%'+CustName+'%',))
   else:
     retrieve_cust_cursor.execute("SELECT CustomerID, CustomerName, SUM(RentalBalance) FROM vRentalInfo GROUP BY CustomerName ORDER BY COUNT(RentalBalance) DESC")
-  
-  # # Old Version
-  # if CustID != '':
-  #       retrieve_cust_cursor.execute(
-  #           "SELECT C.CustID, C.CustName, SUM(R.TotalAmount) FROM CUSTOMER AS C, RENTAL AS R WHERE C.CUSTID = R.CUSTID AND C.CustID=? AND C.CustName LIKE ? AND R.PAYMENTDATE = 'NULL'", (CustID, ('%'+CustName+'%'),))
-  # elif CustName != '':
-  #   retrieve_cust_cursor.execute(
-  #       "SELECT C.CustID, C.CustName, SUM(R.TotalAmount) FROM CUSTOMER AS C, RENTAL AS R WHERE C.CustName LIKE ? AND C.CUSTID = R.CUSTID AND R.PAYMENTDATE = 'NULL' GROUP BY C.CUSTID ORDER BY R.TOTALAMOUNT DESC", ('%'+CustName+'%',))
-  # else:
-  #   retrieve_cust_cursor.execute(
-  #       "SELECT CustID, CustName, TotalAmount FROM CUSTOMER NATURAL JOIN RENTAL WHERE PAYMENTDATE = 'NULL' GROUP BY CustID ORDER BY TOTALAMOUNT DESC")
-
     
   cust_out_result = retrieve_cust_cursor.fetchall()
   
@@ -391,15 +379,17 @@ def retrieve_cust_info(retrieve_custWindow, CustID, CustName):
   
   print_cust = ''
   
-  rowCount = 1
+  rowCount = 0
 
   for cust_position in cust_out_result:
-      print_cust += str(str(rowCount) + ".) "+(str(cust_position[0])) + " | " + (cust_position[1]) + " | $" + str(cust_position[2]) + ".00\n")
+      print_cust += str((str(cust_position[0])) + " | " + str(cust_position[1]) + " | $" + str(cust_position[2]) + ".00\n")
       rowCount+=1
+
+  print("Count: " + str(rowCount))
 
   print(print_cust)
 
-  retrieve_cust_label = Label(retrieve_custWindow, text=("Customer ID | Customer Name | Remaining Balance\n\n")+print_cust)
+  retrieve_cust_label = Label(retrieve_custWindow, text=("Customer ID | Customer Name | Remaining Balance\n\n")+print_cust+("\nCount: " + str(rowCount)))
   retrieve_cust_label.grid(row=3, column=0, columnspan=2)
 
 # retrieve customer information
@@ -443,7 +433,7 @@ def retrieve_customer_win():
 # Q5B
 # This is the function that retrieves the vehicle information (5b)
 def retrieve_vehicle_info(retrieve_vehicleWindow, VehicleID, CarDescription):
-  # connecting to the sqlite database
+      # connecting to the sqlite database
   retrieve_vehicle_connect = sqlite3.connect('CarRental2019.db')
 
   # cursor to access to connection
@@ -457,10 +447,10 @@ def retrieve_vehicle_info(retrieve_vehicleWindow, VehicleID, CarDescription):
         "SELECT VIN, Vehicle, (OrderAmount/TotalDays) FROM vRentalInfo WHERE VIN LIKE ? AND Vehicle LIKE ? GROUP BY VIN", (('%'+VehicleID+'%'), ('%'+CarDescription+'%'),))
   elif CarDescription != '':
     retrieve_vehicle_cursor.execute(
-        "SELECT VIN, Vehicle, (OrderAmount/TotalDays) FROM vRentalInfo WHERE Vehicle LIKE ? GROUP BY VIN ORDER BY COUNT(OrderAmount/TotalDays) DESC", (('%'+CarDescription+'%'),))
+        "SELECT VIN, Vehicle, (OrderAmount/TotalDays) FROM vRentalInfo WHERE Vehicle LIKE ? GROUP BY VIN ORDER BY (OrderAmount/TotalDays) ASC", (('%'+CarDescription+'%'),))
   else:
     retrieve_vehicle_cursor.execute(
-        "SELECT VIN, Vehicle, (OrderAmount/TotalDays) FROM vRentalInfo GROUP BY VIN ORDER BY COUNT(OrderAmount/TotalDays) DESC")
+        "SELECT VIN, Vehicle, (OrderAmount/TotalDays) FROM vRentalInfo GROUP BY VIN ORDER BY (OrderAmount/TotalDays) ASC")
 
   # old
   # if VehicleID != '':
@@ -477,13 +467,15 @@ def retrieve_vehicle_info(retrieve_vehicleWindow, VehicleID, CarDescription):
   print(cust_out_result)
 
   print_cust = ''
-  rowCount = 1
+  rowCount = 0
   for cust_position in cust_out_result:
-      print_cust += str(str(rowCount) + ".) " + (str(cust_position[0])) + "  |  " + str(cust_position[1]) + "  |  $" + str(cust_position[2])+"\n")
+      print_cust += str((str(cust_position[0])) + "  |  " + str(cust_position[1]) + "  |  $" + str(cust_position[2])+"\n")
       rowCount+=1
-      
+  
+  print("Count: " + str(rowCount))
+  
   retrieve_cust_label = Label(retrieve_vehicleWindow, text=(
-      "VIN # | Vehicle Description  |  Daily Rate \n\n") + print_cust)
+      "VIN # | Vehicle Description  |  Daily Rate \n\n") + print_cust+("\nCount: " + str(rowCount)))
   retrieve_cust_label.grid(row=9, column=0, columnspan=2)
 
 
@@ -523,8 +515,6 @@ def retrieve_vehicle_win():
       retrieve_vehicleWindow, VIN_retrieve.get(), description_retrieve.get()))
   find_vehicle_button.grid(
       row=2, column=0, columnspan=2, pady=10, padx=10, ipadx=100)
-
-
 
 
 # connect to sqlite database
