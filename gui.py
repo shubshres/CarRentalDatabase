@@ -508,6 +508,62 @@ def retrieve_vehicle_win():
       row=2, column=0, columnspan=2, pady=10, padx=10, ipadx=100)
 
 
+# This is the function that will display a list of all available vehicles
+def view_vehicle_info(view_vehicleWindow):
+
+  # connecting to the sqlite database
+  view_vehicle_connect = sqlite3.connect('CarRental2019.db')
+
+  # cursor to access to connection
+  view_vehicle_cursor = view_vehicle_connect.cursor()
+
+  # cursor to access to connection
+  view_vehicle_cursor2 = view_vehicle_connect.cursor()
+
+  print("Viewing Available Vehicles")
+
+  # List all available vehicles
+  view_vehicle_cursor.execute(
+      "SELECT V.CarDescription FROM VEHICLE AS V, RENTAL AS R WHERE R.VehicleID = V.VehicleID AND R.Returned = 1 GROUP BY V.CarDescription",)
+
+  print_list = ''
+
+  list_result = view_vehicle_cursor.fetchall()
+
+  #print(list_result)
+
+  rowCount = 0
+
+  for cust_position in list_result:
+      print_list += str((str(cust_position[0])) + "\n")
+      rowCount += 1
+
+  list_label = Label(view_vehicleWindow, text=(
+      "List of all Vehicles \n\n") + print_list + "\n\nCount: " + str(rowCount))
+  list_label.grid(row=9, column=0, columnspan=2)
+
+
+# This is the function that will display the window for a list of all available vehicles
+def view_vehicle_win():
+  # make retrieve vehicle window
+  view_vehicleWindow = Toplevel(root)
+
+  # set the window title
+  view_vehicleWindow.title("View Available Vehicles")
+
+  # set the dimensions
+  view_vehicleWindow.geometry("500x500")
+
+  # Button to output all available vehicles
+  view_vehicle_button = Button(view_vehicleWindow, text='View Available Vehicles',
+                               command=lambda: view_vehicle_info(view_vehicleWindow))
+  view_vehicle_button.grid(row=2, column=0, columnspan=2,
+                           pady=10, padx=10, ipadx=100)
+
+
+
+
+
 # connect to sqlite database
 root = Tk()
 root.title('Car Rental Database')
@@ -544,6 +600,12 @@ get_cust_btn.grid(row=5, column=0, columnspan=2, pady=10, ipadx=100)
 get_vhcl_btn = Button(root, text='Retrieve Vehicle Info',
                       command=retrieve_vehicle_win)
 get_vhcl_btn.grid(row=6, column=0, columnspan=2, pady=10, ipadx=100)
+
+
+view_vhcl_btn = Button(root, text='View Available Vehicles',
+                       command=view_vehicle_win)
+view_vhcl_btn.grid(row=7, column=0, columnspan=2, pady=10, ipadx=100)
+
 
 # execute the tkinter components
 root.mainloop()
