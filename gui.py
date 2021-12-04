@@ -367,7 +367,7 @@ def retrieve_cust_info(retrieve_custWindow, CustID, CustName):
   # New Version
   if CustID != '':
     retrieve_cust_cursor.execute(
-        "SELECT CustomerID, CustomerName, SUM(RentalBalance) FROM vRentalInfo WHERE CustomerID LIKE ? AND CustomerName LIKE ?", (('%'+CustID+'%'), ('%'+CustName+'%'),))
+        "SELECT CustomerID, CustomerName, SUM(RentalBalance) FROM vRentalInfo WHERE CustomerID LIKE ? AND CustomerName LIKE ? GROUP BY CustomerID ORDER BY COUNT(RentalBalance) DESC", (('%'+CustID+'%'), ('%'+CustName+'%'),))
   elif CustName != '':
     retrieve_cust_cursor.execute("SELECT CustomerID, CustomerName, SUM(RentalBalance) FROM vRentalInfo WHERE CustomerName LIKE ? GROUP BY CustomerName ORDER BY COUNT(RentalBalance) DESC", ('%'+CustName+'%',))
   else:
@@ -444,10 +444,12 @@ def retrieve_vehicle_info(retrieve_vehicleWindow, VehicleID, CarDescription):
 
   if VehicleID != '':
     retrieve_vehicle_cursor.execute(
-        "SELECT VIN, Vehicle, (ROUND(CAST(SUM(OrderAmount) AS float)/SUM(TotalDays), 2)) FROM vRentalInfo WHERE VIN LIKE ? AND Vehicle LIKE ?", (('%'+VehicleID+'%'), ('%'+CarDescription+'%'),))
+        "SELECT VIN, Vehicle, (ROUND(CAST(SUM(OrderAmount) AS float)/SUM(TotalDays), 2)) FROM vRentalInfo WHERE VIN LIKE ? GROUP BY VIN ORDER BY (SUM(OrderAmount)/SUM(TotalDays)) ASC", (('%'+VehicleID+'%'),))
   elif CarDescription != '':
     retrieve_vehicle_cursor.execute(
         "SELECT VIN, Vehicle, (ROUND(CAST(SUM(OrderAmount) AS float)/SUM(TotalDays), 2)) FROM vRentalInfo WHERE Vehicle LIKE ? GROUP BY VIN ORDER BY (SUM(OrderAmount)/SUM(TotalDays)) ASC", (('%'+CarDescription+'%'),))
+  elif VehicleID != '' & CarDescription != '':
+      "SELECT VIN, Vehicle, (ROUND(CAST(SUM(OrderAmount) AS float)/SUM(TotalDays), 2)) FROM vRentalInfo WHERE VIN LIKE ? AND Vehicle LIKE ? GROUP BY VIN ORDER BY (SUM(OrderAmount)/SUM(TotalDays)) ASC", (('%'+VehicleID+'%'), ('%'+CarDescription+'%'),)
   else:
     retrieve_vehicle_cursor.execute(
         "SELECT VIN, Vehicle, (ROUND(CAST(SUM(OrderAmount) AS float)/SUM(TotalDays), 2)) FROM vRentalInfo GROUP BY VIN ORDER BY (SUM(OrderAmount)/SUM(TotalDays)) ASC")
