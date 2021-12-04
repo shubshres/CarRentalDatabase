@@ -444,12 +444,10 @@ def retrieve_vehicle_info(retrieve_vehicleWindow, VehicleID, CarDescription):
 
   if VehicleID != '':
     retrieve_vehicle_cursor.execute(
-        "SELECT VIN, Vehicle, (ROUND(CAST(SUM(OrderAmount) AS float)/SUM(TotalDays), 2)) FROM vRentalInfo WHERE VIN LIKE ? GROUP BY VIN ORDER BY (SUM(OrderAmount)/SUM(TotalDays)) ASC", (('%'+VehicleID+'%'),))
+        "SELECT VIN, Vehicle, (ROUND(CAST(SUM(OrderAmount) AS float)/SUM(TotalDays), 2)) FROM vRentalInfo WHERE VIN LIKE ? AND Vehicle LIKE ? GROUP BY VIN ORDER BY (SUM(OrderAmount)/SUM(TotalDays)) ASC", (('%'+VehicleID+'%'),('%'+CarDescription+'%'),))
   elif CarDescription != '':
     retrieve_vehicle_cursor.execute(
         "SELECT VIN, Vehicle, (ROUND(CAST(SUM(OrderAmount) AS float)/SUM(TotalDays), 2)) FROM vRentalInfo WHERE Vehicle LIKE ? GROUP BY VIN ORDER BY (SUM(OrderAmount)/SUM(TotalDays)) ASC", (('%'+CarDescription+'%'),))
-  elif VehicleID != '' & CarDescription != '':
-      "SELECT VIN, Vehicle, (ROUND(CAST(SUM(OrderAmount) AS float)/SUM(TotalDays), 2)) FROM vRentalInfo WHERE VIN LIKE ? AND Vehicle LIKE ? GROUP BY VIN ORDER BY (SUM(OrderAmount)/SUM(TotalDays)) ASC", (('%'+VehicleID+'%'), ('%'+CarDescription+'%'),)
   else:
     retrieve_vehicle_cursor.execute(
         "SELECT VIN, Vehicle, (ROUND(CAST(SUM(OrderAmount) AS float)/SUM(TotalDays), 2)) FROM vRentalInfo GROUP BY VIN ORDER BY (SUM(OrderAmount)/SUM(TotalDays)) ASC")
