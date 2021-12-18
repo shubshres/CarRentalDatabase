@@ -12,6 +12,7 @@ Removed each header row in each .csv file with the data
 
 <br/>
 Commands used before running queries:
+
 ```
   .schema
   .read main.sql
