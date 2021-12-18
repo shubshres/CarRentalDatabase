@@ -42,7 +42,9 @@ into the terminal and ensure
 ### Query 1:
 
 ```
---Add an extra column ‘Returned’ to the RENTAL table. Values will be 0-for non-returned cars, and 1-for returned. Then update the ‘Returned’ column with '1' for all records that they have a payment date and with '0' for those that they do not have a payment date.
+-- Add an extra column ‘Returned’ to the RENTAL table. 
+-- Values will be 0-for non-returned cars, and 1-for returned. 
+-- Then update the ‘Returned’ column with '1' for all records that they have a payment date and with '0' for those that they do not have a payment date.
 
 ALTER TABLE RENTAL ADD COLUMN Returned INTEGER DEFAULT 0;
 UPDATE RENTAL
@@ -54,4 +56,48 @@ WHERE PaymentDate <> 'NULL';
 Output:
 
 ![](screenshots/task1.png)
+
+<br/>
+
+### Query 2
+
+```
+
+--Create a view vRentalInfo that retrieves all information per rental.
+CREATE VIEW vRentalInfo
+AS SELECT R.OrderDate, R.StartDate, R.ReturnDate, CAST(JULIANDAY(R.ReturnDate)-JULIANDAY(R.StartDate) AS INTEGER) AS TotalDays, R.VehicleID AS VIN, V.CarDescription AS Vehicle,
+CASE 
+  WHEN V.CarType = 1 THEN 'Compact'
+  WHEN V.CarType = 2 THEN 'Medium'
+  WHEN V.CarType = 3 THEN 'Large'
+  WHEN V.CarType = 4 THEN 'SUV'
+  WHEN V.CarType = 5 THEN 'Truck'
+  WHEN V.CarType = 6 THEN 'Van'  
+END AS Type,
+CASE 
+  WHEN V.CarCategory = 0 THEN 'Basic'
+  WHEN V.CarCategory = 1 THEN 'Luxury'
+END AS Category,
+R.CustID AS CustomerID, C.CustName AS CustomerName, R.TotalAmount AS OrderAmount, 
+CASE  
+  WHEN R.PaymentDate = 'NULL' THEN R.TotalAmount
+  WHEN R.PaymentDate <> 'NULL' THEN 0
+END AS RentalBalance
+   FROM RENTAL AS R JOIN VEHICLE AS V ON R.VehicleID = V.VehicleID
+        JOIN CUSTOMER AS C ON R.CustID = C.CustID 
+   ORDER BY StartDate ASC;
+
+--Result
+SELECT *
+FROM vRentalInfo;
+
+--How many rows returned
+SELECT COUNT(OrderDate) AS Number_of_Rows
+FROM vRentalInfo;
+
+```
+
+Output of vRentalInfo and Number of Rows Returned:
+
+![](screenshots/task2.png)
 
