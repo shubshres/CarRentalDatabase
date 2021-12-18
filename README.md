@@ -142,12 +142,16 @@ Add all the information about a new vehicle.
 ![](screenshots/req2/pic1.png)
 
 
-The information about the new customer is added to the database
+The information about the new vehicle is added to the database
 
 ![](screenshots/req2/pic2.png)
 
 
+### Requirement 3:
 
+Add all the information about a new rental reservation.
+ 
+This finds a free vehicle of the appropriate type and category for a specific rental period. Assumed that the customer has the right to either pay at the order or return date.
 
 
 
