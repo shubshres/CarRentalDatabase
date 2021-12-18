@@ -108,4 +108,19 @@ Output:
 
 - See the Readme.docx in the Code folder for installation details.
 
+- Additional information about how each requirement was implemented and code snippets can be found in the Report.pdf file
+
+<br/>
+
+### Requirement 1:
+
+Add information about a new customer. Customer ID is not provided in the query.
+
+![](screenshots/req1/pic1.png)
+
+![](screenshots/req1/pic2.png)
+
+
+
+
 
