@@ -118,7 +118,13 @@ Add information about a new customer. Customer ID is not provided in the query.
 
 ![](screenshots/req1/pic1.png)
 
+To add information about a new customer, the user clicks the “Add New Customer” button on the main “Car Rental Database” window and types the query’s input parameters and confirms by clicking the “Add Customer” button. 
+
+Feedback to the user about the information added is displayed below the button.
+
 ![](screenshots/req1/pic2.png)
+
+The information about the new customer is added to the database
 
 
 
