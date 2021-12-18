@@ -9,9 +9,7 @@ Created a GUI using Python to access a database with information for a Car Renta
 
 ## Loading Data into Database
 Removed each header row in each .csv file with the data
-
 <br/>
-
 Commands used before running queries:
 ```
   .schema
