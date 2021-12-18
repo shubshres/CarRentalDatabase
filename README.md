@@ -127,6 +127,19 @@ Feedback to the user about the information added is displayed below the button.
 The information about the new customer is added to the database
 
 
+<br/>
+
+### Requirement 2:
+
+Add all the information about a new vehicle.
+
+![](screenshots/req2/pic1.png)
+
+![](screenshots/req2/pic2.png)
+
+
+
+
 
 
 
