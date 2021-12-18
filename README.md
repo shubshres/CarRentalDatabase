@@ -11,7 +11,7 @@ Created a GUI using Python to access a database with information for a Car Renta
 Removed each header row in each .csv file with the data
 
 <br/>
-Commands used before running queries:
+Commands used to load data into CarRental2019.db file:
 
 
 ```
@@ -133,9 +133,17 @@ The information about the new customer is added to the database
 
 Add all the information about a new vehicle.
 
+
+To add information about a new vehicle, the user clicks the “Add New Vehicle” button on the main “Car Rental Database” window and types the query’s input parameters and confirms by clicking the “Add Vehicle” button
+
 ![](screenshots/req2/pic1.png)
 
+
+The information about the new customer is added to the database
+
 ![](screenshots/req2/pic2.png)
+
+
 
 
 
