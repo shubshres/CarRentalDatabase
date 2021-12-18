@@ -59,10 +59,9 @@ Output:
 
 <br/>
 
-### Query 2
+### Query 2:
 
 ```
-
 --Create a view vRentalInfo that retrieves all information per rental.
 CREATE VIEW vRentalInfo
 AS SELECT R.OrderDate, R.StartDate, R.ReturnDate, CAST(JULIANDAY(R.ReturnDate)-JULIANDAY(R.StartDate) AS INTEGER) AS TotalDays, R.VehicleID AS VIN, V.CarDescription AS Vehicle,
@@ -97,7 +96,10 @@ FROM vRentalInfo;
 
 ```
 
-Output of vRentalInfo and Number of Rows Returned:
+Output:
+
 
 ![](screenshots/task2.png)
+
+
 
