@@ -102,10 +102,10 @@ Output:
 ![](screenshots/task2.png)
 
 ## Task 2: Graphical User Interface for CarRental2019 Database
-The graphical user interface, GUI was created using Python, Tkinter and SQLite3. 
+- The graphical user interface, GUI was created using Python, Tkinter and SQLite3. 
 
-The following includes the execute queries Python for each requirement in Task 2 using the GUI. 
+- The following includes the execute queries Python for each requirement in Task 2 using the GUI. 
 
-See the Readme.docx in the Code folder for installation details.
+- See the Readme.docx in the Code folder for installation details.
 
 
