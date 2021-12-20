@@ -211,6 +211,17 @@ List for every customer the ID, name, and if there is any remaining balance.
 
 The user has the right to search either by a customer’s ID, name, part of the name, or to run the query with no filters/criteria. The amount is in US dollars. For customers with zero (0) or NULL balance, returns zero dollars ($0.00). In the case that the user decides not to provide any filters, order the results based on the balance amount. Returns meaningful attribute names and all records.
 
+<br/>
+
+Displaying remaining balance for J. Brown
+
+![](screenshots/req5a/pic1.png)
+
+
+Displaying remaining balance for all customers (Nothing was entered)
+
+![](screenshots/req5a/pic2.png)
+
 
 <br/>
 
