@@ -179,7 +179,25 @@ Database AFTER adding rental reservation (Rental Table)
 ![](screenshots/req3/pic5.png)
 
 
+<br/>
+
+### Requirement 4:
+
+Handle the return of a rented car. Transaction prints the total customer payment due for that rental, enters it in the database, and updates the Returned attribute accordingly. Retrieves a rental by the return date, customer name, and vehicle information.
+ 
 
 
+<br/>
+
+### Requirement 5a:
+
+List for every customer the ID, name, and if there is any remaining balance. The user has the right to search either by a customer’s ID, name, part of the name, or to run the query with no filters/criteria. The amount is in US dollars. For customers with zero (0) or NULL balance, returns zero dollars ($0.00). In the case that the user decides not to provide any filters, order the results based on the balance amount. Returns meaningful attribute names and all records.
+
+
+<br/>
+
+### Requirement 5b:
+
+List for every vehicle the VIN, the description, and the average DAILY price. The user has the right either to search by the VIN, vehicle’s description, part of the description, or to run the query with no filters/criteria. An example criterion would be all ‘BMW’ vehicles. The amount needs to be in US dollars. The average DAILY price derives from the rental table, and the amount needs to have two decimals as well as the dollar ‘$’ sign. For vehicles that they do not have any rentals, substitute the NULL value with a ‘Non-Applicable’ text. Returns meaningful attribute names. In the case that the user decides not to provide any filters, order the results based on the average daily price.
 
 
