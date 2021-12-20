@@ -152,7 +152,7 @@ The information about the new vehicle is added to the database
 Add all the information about a new rental reservation.
 
 This finds a free vehicle of the appropriate type and category for a specific rental period. Assumed that the customer has the right to either pay at the order or return date.
-
+<br/>
 
 Viewing available vehicles:
 ![](screenshots/req3/pic1.png)
