@@ -218,6 +218,8 @@ Displaying remaining balance for J. Brown
 ![](screenshots/req5a/pic1.png)
 
 
+<br/>
+
 Displaying remaining balance for all customers (Nothing was entered)
 
 ![](screenshots/req5a/pic2.png)
@@ -230,5 +232,17 @@ Displaying remaining balance for all customers (Nothing was entered)
 List for every vehicle the VIN, the description, and the average DAILY price. 
 
 The user has the right either to search by the VIN, vehicle’s description, part of the description, or to run the query with no filters/criteria. An example criterion would be all ‘BMW’ vehicles. The amount needs to be in US dollars. The average DAILY price derives from the rental table, and the amount needs to have two decimals as well as the dollar ‘$’ sign. For vehicles that they do not have any rentals, substitute the NULL value with a ‘Non-Applicable’ text. Returns meaningful attribute names. In the case that the user decides not to provide any filters, order the results based on the average daily price.
+
+<br/>
+
+Displaying the average daily price for a specific vehicle
+
+![](screenshots/req5b/pic1.png)
+
+<br/>
+
+Displaying the average daily price for ALL vehicles (Nothing entered)
+
+![](screenshots/req5b/pic2.png)
 
 
