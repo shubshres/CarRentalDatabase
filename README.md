@@ -153,14 +153,21 @@ Add all the information about a new rental reservation.
 
 This finds a free vehicle of the appropriate type and category for a specific rental period. Assumed that the customer has the right to either pay at the order or return date.
 
+
+Viewing available vehicles:
 ![](screenshots/req3/pic1.png)
 
+
+Window to add a new rental:
 ![](screenshots/req3/pic2.png)
 
+Database prior to adding a rental reservation (Rental Table)
 ![](screenshots/req3/pic3.png)
 
+Adding Rental
 ![](screenshots/req3/pic4.png)
 
+Database AFTER adding rental reservation (Rental Table)
 ![](screenshots/req3/pic5.png)
 
 
